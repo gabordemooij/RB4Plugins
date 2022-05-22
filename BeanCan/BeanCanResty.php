@@ -49,37 +49,37 @@ class BeanCanResty
 	/**
 	 * @var OODB
 	 */
-	private $oodb;
+	protected $oodb;
 
 	/**
 	 * @var ToolBox
 	 */
-	private $toolbox;
+	protected $toolbox;
 
 	/**
 	 * @var array
 	 */
-	private $whitelist;
+	protected $whitelist;
 
 	/**
 	 * @var array
 	 */
-	private $sqlSnippets = array();
+	protected $sqlSnippets = array();
 
 	/**
 	 * @var string
 	 */
-	private $method;
+	protected $method;
 
 	/**
 	 * @var array
 	 */
-	private $payload = array();
+	protected $payload = array();
 
 	/**
 	 * @var string
 	 */
-	private $uri;
+	protected $uri;
 
 	/**
 	 * Reference bean, the bean used to find other beans in a REST request.
@@ -87,47 +87,47 @@ class BeanCanResty
 	 *
 	 * @var OODBBean
 	 */
-	private $root;
+	protected $root;
 
 	/**
 	 * Name of the currently selected list.
 	 *
 	 * @var string
 	 */
-	private $list;
+	protected $list;
 
 	/**
 	 * @var OODBBean
 	 */
-	private $bean;
+	protected $bean;
 
 	/**
 	 * Name of the type of the currently selected list.
 	 *
 	 * @var string
 	 */
-	private $type;
+	protected $type;
 
 	/**
 	 * Type of the currently selected bean.
 	 *
 	 * @var string
 	 */
-	private $beanType;
+	protected $beanType;
 
 	/**
 	 * List of bindings for the SQL snippet.
 	 *
 	 * @var array
 	 */
-	private $sqlBindings;
+	protected $sqlBindings;
 
 	/**
 	 * An SQL snippet to sort or modify the contents of a list.
 	 *
 	 * @var string
 	 */
-	private $sqlSnippet;
+	protected $sqlSnippet;
 
 	/**
 	 * Writes a response object for the client (JSON encoded). Internal method.
@@ -140,7 +140,7 @@ class BeanCanResty
 	 *
 	 * @return array $response
 	 */
-	private function resp( $result = NULL, $errorCode = '500', $errorMessage = 'Internal Error' )
+	protected function resp( $result = NULL, $errorCode = '500', $errorMessage = 'Internal Error' )
 	{
 		$response = array( 'red-resty' => '1.0' );
 
@@ -161,7 +161,7 @@ class BeanCanResty
 	 *
 	 * @return array
 	 */
-	private function get()
+	protected function get()
 	{
 		return $this->resp( $this->bean->export() );
 	}
@@ -180,7 +180,7 @@ class BeanCanResty
 	 *
 	 * @return array
 	 */
-	private function put()
+	protected function put()
 	{
 		if ( !isset( $this->payload['bean'] ) ) {
 			return $this->resp( NULL, self::C_HTTP_BAD_REQUEST, 'Missing parameter \'bean\'.' );
@@ -219,7 +219,7 @@ class BeanCanResty
 	 *
 	 * @return array
 	 */
-	private function post()
+	protected function post()
 	{
 		if ( !isset( $this->payload['bean'] ) ) {
 			return $this->resp( NULL, self::C_HTTP_BAD_REQUEST, 'Missing parameter \'bean\'.' );
@@ -261,7 +261,7 @@ class BeanCanResty
 	 *
 	 * @return array
 	 */
-	private function openList()
+	protected function openList()
 	{
 		$listOfBeans = array();
 
@@ -292,7 +292,7 @@ class BeanCanResty
 	 *
 	 * @return array
 	 */
-	private function delete()
+	protected function delete()
 	{
 		$this->oodb->trash( $this->bean );
 
@@ -314,7 +314,7 @@ class BeanCanResty
 	 *
 	 * @return array
 	 */
-	private function custom()
+	protected function custom()
 	{
 		if ( !isset( $this->payload['param'] ) ) {
 			$this->payload['param'] = array();
@@ -335,7 +335,7 @@ class BeanCanResty
 	 *
 	 * @return void
 	 */
-	private function extractSQLSnippetsForGETList()
+	protected function extractSQLSnippetsForGETList()
 	{
 		$sqlBundleItem = ( isset( $this->sqlSnippets[$this->list] ) ) ? $this->sqlSnippets[$this->list] : array( NULL, array() );
 
@@ -354,7 +354,7 @@ class BeanCanResty
 	 *
 	 * @return array
 	 */
-	private function dispatch()
+	protected function dispatch()
 	{
 		if ( $this->method == 'GET' ) {
 			if ( $this->list === NULL ) {
@@ -378,7 +378,7 @@ class BeanCanResty
 	 *
 	 * @return boolean
 	 */
-	private function isOnWhitelist()
+	protected function isOnWhitelist()
 	{
 		return (
 			$this->whitelist === 'all'
@@ -404,7 +404,7 @@ class BeanCanResty
 	 *
 	 * @return void
 	 */
-	private function findBeanByURI()
+	protected function findBeanByURI()
 	{
 		$finder = new Finder( $this->toolbox );
 
@@ -419,7 +419,7 @@ class BeanCanResty
 	 *
 	 * @return boolean
 	 */
-	private function extractListInfo()
+	protected function extractListInfo()
 	{
 		if ( $this->method == 'POST' ) {
 			if ( count( $this->uri ) < 1 ) return FALSE;
@@ -447,7 +447,7 @@ class BeanCanResty
 	 *
 	 * @return boolean
 	 */
-	private function isURIValid()
+	protected function isURIValid()
 	{
 		if ( preg_match( '|^[\w\-/]*$|', $this->uri ) ) {
 			return FALSE;
@@ -461,7 +461,7 @@ class BeanCanResty
 	 *
 	 * @return void
 	 */
-	private function extractURI()
+	protected function extractURI()
 	{
 		$this->uri = ( ( strlen( $this->uri ) ) ) ? explode( '/', ( $this->uri ) ) : array();
 	}
@@ -471,7 +471,7 @@ class BeanCanResty
 	 *
 	 * @return array
 	 */
-	private function handleRESTRequest()
+	protected function handleRESTRequest()
 	{
 		try {
 			if ( $this->isURIValid() ) {
@@ -513,7 +513,7 @@ class BeanCanResty
 	 *
 	 * @return void
 	 */
-	private function clearState()
+	protected function clearState()
 	{
 		$this->list        = NULL;
 		$this->bean        = NULL;
